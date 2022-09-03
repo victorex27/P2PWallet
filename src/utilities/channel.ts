@@ -2,7 +2,7 @@ enum CHANNEL {
     CARD = 'card',
     BANK = 'bank',
     USSD = 'ussd',
-    WALLET = 'wallet'
+    WALLET = 'wallet',
 }
 
-export default CHANNEL;
+export default CHANNEL

@@ -1,7 +1,7 @@
 enum STATUS {
     PENDING = 'pending',
     SUCCESSFUL = 'successful',
-    FAILED = 'failed'
+    FAILED = 'failed',
 }
 
-export default STATUS;
+export default STATUS

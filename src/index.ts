@@ -1,16 +1,16 @@
-import app from "./app";
-import config from "config"
-import { AppDataSource } from "./data-source"
+import app from './app'
+import config from 'config'
 
-const PORT = config.get('App.system.port');
+import { appDataSourceInitializer } from './utilities/app-data-source-initializer'
 
+const PORT = config.get('App.system.port')
 
-AppDataSource.initialize().then(async () => {
-   
+appDataSourceInitializer
 
-    app.listen(PORT, () => {
-        console.log(`App listening on Port ${PORT}`);
-    });
-    
-
-}).catch(error => console.log(error))
+appDataSourceInitializer()
+    .then(async () => {
+        app.listen(PORT, () => {
+            console.log(`App listening on Port ${PORT}`)
+        })
+    })
+    .catch((error) => console.log(error))
