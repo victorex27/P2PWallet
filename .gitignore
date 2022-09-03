@@ -109,3 +109,9 @@ dist
 #nyc output
 /.nyc_output
 /coverage
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
