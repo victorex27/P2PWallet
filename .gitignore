@@ -105,3 +105,7 @@ dist
 
 #config
 /config
+
+#nyc output
+/.nyc_output
+/coverage
