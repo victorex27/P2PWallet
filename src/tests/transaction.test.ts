@@ -4,11 +4,13 @@ import * as chai from 'chai'
 import { request, expect } from 'chai'
 import chaiHttp = require('chai-http')
 import 'mocha'
+import nock from 'nock'
 
 import { appDataSourceInitializer } from '../utilities/app-data-source-initializer'
 import { addASingleUserToDatabase } from '../utilities/save-user'
 import {
     deleteAllFundTransferFromDatabase,
+    deleteAllPaystackDataFromDatabase,
     deleteAllUsersFromDatabase,
 } from '../utilities/delete-all-users'
 import { User } from '../entity/User'
@@ -271,16 +273,185 @@ describe('/POST /transfer/fund', () => {
                 .then((res) => {
                     expect(res.status).to.eql(201)
 
-                    expect(res.body.message).to.eql(
-                        'Transfer was successful.'
-                    )
+                    expect(res.body.message).to.eql('Transfer was successful.')
                     return getUserFromDatabase(body.email)
-                }).then((user) => {
-                    expect(user?.balance).to.eql(
-                        user2.balance + body.amount 
-                    )
+                })
+                .then((user) => {
+                    expect(user?.balance).to.eql(user2.balance + body.amount)
+                })
+        })
+    })
+})
 
+describe('/POST /paystack/initiate', () => {
+    // Add a User to the Database
+    before((done) => {
+        appDataSourceInitializer()
+            .then(() => {
+                addASingleUserToDatabase(user1)
+            })
+            .then(() => done())
+    })
 
+    // Run teardown
+    after((done) => {
+        deleteAllPaystackDataFromDatabase().then(() =>
+            deleteAllUsersFromDatabase(done)
+        )
+    })
+
+    describe('User tries to transfer without login in', () => {
+        it('should return a success message', () => {
+            const body = {
+                amount: 100000,
+            }
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(401)
+
+                    expect(res.body.message).to.eql('Invalid token')
+                })
+        })
+    })
+
+    describe('User tries to transfer with expired token ', () => {
+        it('should return a success message', () => {
+            const body = {
+                amount: 100000,
+            }
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', expiredToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(401)
+
+                    expect(res.body.message).to.eql(`invalid signature`)
+                })
+        })
+    })
+
+    describe('User tries to transfer with invalid token ', () => {
+        it('should return a success message', () => {
+            const body = {
+                amount: 100000,
+            }
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', invalidToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(401)
+
+                    expect(res.body.message).to.eql(`jwt malformed`)
+                })
+        })
+    })
+
+    describe('Missing amount field', () => {
+        it('should return an error message', () => {
+            const body = {}
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(400)
+                    expect(res.body.message).to.eql('Invalid amount')
+                })
+        })
+    })
+
+    describe('Invalid amount is passed', () => {
+        it('should return an error message', () => {
+            const body = {
+                amount: -10,
+            }
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(400)
+                    expect(res.body.message).to.eql('Invalid amount')
+                })
+        })
+    })
+
+    describe('Invalid amount is passed', () => {
+        it('should return an error message', () => {
+            const body = {
+                amount: 'ama',
+            }
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(400)
+                    expect(res.body.message).to.eql('Invalid amount')
+                })
+        })
+    })
+
+    describe('When paystack url is not reacheable', () => {
+        it('should return a success message', () => {
+            const body = {
+                amount: 100000,
+                email: 'aobikobe@gmail.com',
+            }
+
+            nock('https://api.paystack.co')
+                .post('/transaction/initialize')
+                .reply(500)
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(500)
+                })
+        })
+    })
+
+    describe('A valid object body is passed', () => {
+        it('should return a success message', () => {
+            const body = {
+                amount: 100000,
+                email: 'aobikobe@gmail.com',
+            }
+
+            nock('https://api.paystack.co')
+                .post('/transaction/initialize')
+                .reply(200, {
+                    status: true,
+                    message: 'Authorization URL created',
+                    data: {
+                        authorization_url:
+                            'https://checkout.paystack.com/zuuyqoliznhaeri',
+                        access_code: 'zuuyqoliznhaeri',
+                        reference: '51f1wiobnt',
+                    },
+                })
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(201)
+
+                    expect(res.body.message).to.eql('Authorization URL created')
+
+                    expect(res.body).to.have.property('authorization_url')
+                    expect(res.body).to.have.property('access_code')
+                    expect(res.body).to.have.property('reference')
                 })
         })
     })

@@ -5,6 +5,6 @@ export class FundTransferPayload {
     email: string
 
     @IsNumber()
-    @Min(5)
+    @Min(100)
     amount: number
 }

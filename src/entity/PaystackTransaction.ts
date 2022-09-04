@@ -36,7 +36,7 @@ export class PaystackTransaction {
     @Column('text')
     status: STATUS
 
-    @Column('text')
+    @Column({ type: 'text', nullable: true })
     channel: CHANNEL
 
     @Column({ nullable: true, default: 'NGN' })

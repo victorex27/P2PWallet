@@ -4,11 +4,10 @@ import { UserError, NotFoundError } from '../../utilities/errors'
 import { FundTransferPayload } from './TransactionValidator'
 import { performFundTransfer } from '../../utilities/update-user-balance'
 import { User } from '../../entity/User'
+import { initiatePaystackFundingRequest } from '../../utilities/axiosCall'
+import { insertRequestIntoPaystackTransactionsDatabase } from '../../utilities/add-to-paystack-table'
 
-export const FundTransferService = async (
-    payload: FundTransferPayload,
-    sender: User
-) => {
+const runValidation = async (payload: FundTransferPayload) => {
     const validator = new FundTransferPayload()
 
     validator.amount = payload?.amount
@@ -19,10 +18,35 @@ export const FundTransferService = async (
     if (errors.length > 0) {
         throw UserError(`Invalid ${errors[0].property}`)
     }
+}
 
-    const recipient = await getUserFromDatabase(validator.email)
+export const FundTransferService = async (
+    payload: FundTransferPayload,
+    sender: User
+) => {
+    await runValidation(payload)
+
+    const recipient = await getUserFromDatabase(payload.email)
 
     if (!recipient) throw NotFoundError('Recipient account not found')
 
     await performFundTransfer({ sender, recipient, amount: payload.amount })
+}
+
+export const PaystackFundingInitiatorService = async (
+    user: User,
+    payload: FundTransferPayload
+) => {
+    payload.email = user.email
+    await runValidation(payload)
+
+    const response = await initiatePaystackFundingRequest(payload)
+
+    insertRequestIntoPaystackTransactionsDatabase(
+        user,
+        response,
+        payload.amount
+    )
+
+    return response
 }
