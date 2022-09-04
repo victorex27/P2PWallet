@@ -56,7 +56,10 @@ npm install
     
   
 
-
+- To start development server
+```
+    npm run start:dev
+```
 
 - To build
 ```
@@ -66,11 +69,6 @@ npm install
 - To start
 ```
     npm run start
-```
-
-- To start development server
-```
-    npm run start:dev
 ```
 
 
@@ -114,6 +112,17 @@ This system was also developed on Ubuntu.
 ## Documentation
 View Documentation [P2P Wallet Documentation](https://documenter.getpostman.com/view/5657161/VUxXKiMV)
 And [P2P Wallet Base Url ](https://p2pwallet2.herokuapp.com//)
+
+
+## Use of Software
+- User has to signup in other to use the account
+- User also needs to login to generate a jwt token that expires every 15 minutes
+- JWT should be issued as a bearer token for each request
+- User should call Initiate Fund from Bank to initiate request to Paystack. A response will be returned with the url for payment
+- User should use this url to complete transaction.
+- User should use the referenceId gotten from Initiate Fund Api to confirm transaction status
+- User can use the Fund Transfer endpoint to make transfer to another valid account
+
 ## Built With
 
 * [Typescript](https://www.typescriptlang.org/) - Type safety for javascript
@@ -125,7 +134,8 @@ And [P2P Wallet Base Url ](https://p2pwallet2.herokuapp.com//)
 * [Mocha](https://mochajs.org/) 
 * [Chai](https://www.chaijs.com/) - Used to generate RSS Feeds
 * [Heroku](https://www.heroku.com/) - Cloud application platform used for app deployment
-* [ElephantSql](https://www.elephantsql.com) 
+* [ElephantSql](https://www.elephantsql.com) - ElephantSQL - PostgreSQL as a Service
+* [Paystack](https://paystack.com/) - Modern online and offline payments for Africa
 ## Contributing
 
 Please raise a pull request.
