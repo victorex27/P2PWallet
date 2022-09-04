@@ -1,5 +1,6 @@
 import { AppDataSource } from '../data-source'
 import { FundTransfer } from '../entity/FundTransfer'
+import { PaystackTransaction } from '../entity/PaystackTransaction'
 
 import { User } from '../entity/User'
 import STATUS from './status'
@@ -49,3 +50,4 @@ export const performFundTransfer = async ({
         }
     )
 }
+

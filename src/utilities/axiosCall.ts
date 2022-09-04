@@ -1,26 +1,20 @@
 import axios from 'axios';
 import config from 'config';
 import { FundTransferPayload } from '../components/Transaction/TransactionValidator';
+import { initiatePaystackFundingResponseInterface } from './interface/paystack';
 
 
-const paystackInitiateUrl: string = config.get("App.paystack.url.initiate");
+const paystackInitiateUrl: string = config.get("App.paystack.url.inititate");
 const paystackSecret: string = config.get("App.paystack.secretKey");
 
 
-interface initiatePaystackFundingRequestInterface {
 
-    status: boolean,
-    authorization_url: string,
-    access_code: string,
-    reference: string
-
-}
 
 
 export const initiatePaystackFundingRequest = async (payload: FundTransferPayload) => {
 
 
-    const { data } = await axios.post<initiatePaystackFundingRequestInterface>(
+    const { data } = await axios.post<initiatePaystackFundingResponseInterface>(
         paystackInitiateUrl,
         payload,
         {

@@ -5,6 +5,6 @@ export class FundTransferPayload {
     email: string
 
     @IsNumber()
-    @Min(5)
+    @Min(10000, {message:'Mininum amount of 10000. Value is in kobo.'})
     amount: number
 }

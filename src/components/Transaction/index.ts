@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { FundTransferController } from './TransactionController'
+import { FundTransferController, PaystackFundingInitiatorController } from './TransactionController'
 import {
     GetSenderMiddleware,
     doesUserHaveSufficientBalance,
@@ -14,6 +14,12 @@ router.post(
     doesUserHaveSufficientBalance,
     isUserEmailTheSameWithRecipient,
     FundTransferController
+)
+
+router.post(
+    '/paystack/initiate',
+    GetSenderMiddleware,
+    PaystackFundingInitiatorController
 )
 
 export default router
