@@ -1,13 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm"
-import { User } from "./User";
-import CHANNEL from "../utilities/channel"
-import STATUS from "../utilities/status"
-
-
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm'
+import { User } from './User'
+import CHANNEL from '../utilities/channel'
+import STATUS from '../utilities/status'
 
 @Entity()
 export class Transaction {
-
     @PrimaryGeneratedColumn()
     id: number
 
@@ -27,25 +30,22 @@ export class Transaction {
     @Column()
     referenceId: string
 
-    @Column("double precision")
+    @Column('double precision')
     amount: number
 
-    @Column("text")
+    @Column('text')
     status: STATUS
 
-    @Column("text")
+    @Column('text')
     channel: CHANNEL
 
-    @Column("double precision")
+    @Column('double precision')
     currency: string
 
-    @Column("double precision")
+    @Column('double precision')
     fees: string
 
     @ManyToOne(() => User, (user) => user.id)
     @JoinColumn()
     recipient: User
-
-
-
 }
