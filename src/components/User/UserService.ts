@@ -44,7 +44,5 @@ export const UserLoginService = async (user: AttemptingLoginUser) => {
 
     if (!verified) throw AuthenticationError('Invalid login attempt')
 
-    const { password, ...userWithoutPassword } = foundUser
-
-    return userWithoutPassword
+    return foundUser
 }

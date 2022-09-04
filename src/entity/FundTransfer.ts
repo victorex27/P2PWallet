@@ -10,7 +10,7 @@ import CHANNEL from '../utilities/channel'
 import STATUS from '../utilities/status'
 
 @Entity()
-export class Transaction {
+export class FundTransfer {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -18,31 +18,19 @@ export class Transaction {
     @JoinColumn()
     user: User
 
-    @Column()
-    authorizationUrl: string
-
-    @Column()
-    paystackId: string
-
-    @Column()
-    accessCode: string
-
-    @Column()
-    referenceId: string
-
     @Column('double precision')
     amount: number
 
     @Column('text')
     status: STATUS
 
-    @Column('text')
+    @Column({ type: 'text', default: CHANNEL.WALLET })
     channel: CHANNEL
 
-    @Column('double precision')
+    @Column({ nullable: true, default: 'NGN' })
     currency: string
 
-    @Column('double precision')
+    @Column({ nullable: true, default: '0', type: 'double precision' })
     fees: string
 
     @ManyToOne(() => User, (user) => user.id)

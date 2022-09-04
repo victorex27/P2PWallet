@@ -1,6 +1,6 @@
 import ErrorWithStatusCode from './interface/ErrorWithStatusCode'
 
-const CustomError = (name: string, code: number, message: string) => {
+export const CustomError = (name: string, code: number, message: string) => {
     const err: ErrorWithStatusCode = {
         name,
         message,
