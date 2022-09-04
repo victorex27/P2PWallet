@@ -3,9 +3,9 @@ import { getUserFromDatabase } from '../../utilities/get-user'
 import { UserError, NotFoundError } from '../../utilities/errors'
 import { FundTransferPayload } from './TransactionValidator'
 import { performFundTransfer } from '../../utilities/update-user-balance'
-import * as UserInterface from '../../utilities/interface/User';
+import { User } from '../../entity/User'
 
-export const FundTransferService = async (payload: FundTransferPayload, sender: UserInterface.default) => {
+export const FundTransferService = async (payload: FundTransferPayload, sender: User) => {
     const validator = new FundTransferPayload()
 
     validator.amount = payload?.amount;
@@ -21,8 +21,6 @@ export const FundTransferService = async (payload: FundTransferPayload, sender: 
 
     if(!recipient) throw NotFoundError('Recipient account not found');
 
-    const receivingUser: FundTransferPayload = { email: validator.email , amount: recipient.balance + validator.amount};
-    const sendingUser: FundTransferPayload = { email: sender.email , amount: sender.balance - validator.amount};
 
-    await performFundTransfer( sendingUser, receivingUser );
+    await performFundTransfer( {sender, recipient , amount: payload.amount});
 }

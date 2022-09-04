@@ -1,29 +1,42 @@
-import { FundTransferPayload } from '../components/Transaction/TransactionValidator'
 import { AppDataSource } from '../data-source'
+import { FundTransfer } from '../entity/FundTransfer'
 
 import { User } from '../entity/User'
+import STATUS from './status'
+
+interface TransactionInterface {
+    sender: User,
+    recipient: User,
+    amount: number
+}
 
 
 
 export const updateUserBalance = (email: string, amount: number) => {
 
-    // const user = new User();
 
     const userRepository = AppDataSource.getRepository(User)
 
     return userRepository.createQueryBuilder().update({
         balance: amount
     }).where({ email })
-} 
+}
 
 
-export const performFundTransfer = async ({ email: senderEmail, amount: senderAmount} :FundTransferPayload, { email: recipient, amount}: FundTransferPayload)=>{
+export const performFundTransfer = async ({ sender, recipient, amount }: TransactionInterface) => {
 
-    await AppDataSource.manager.transaction( async (transactionalEntityManager)=>{
+    await AppDataSource.manager.transaction(async (transactionalEntityManager) => {
 
-       const a = await transactionalEntityManager.update( User, {email: senderEmail}, { balance: senderAmount});
-       const b = await transactionalEntityManager.update( User, {email: recipient},{ balance: amount});
-        console.log({a,b, senderEmail, senderAmount});
+        const fundTransfer = new FundTransfer();
+
+        fundTransfer.recipient = recipient;
+        fundTransfer.user = sender;
+        fundTransfer.amount = amount;
+        fundTransfer.status = STATUS.SUCCESSFUL;
+
+        await transactionalEntityManager.update(User, { email: sender.email }, { balance: sender.balance - amount });
+        await transactionalEntityManager.update(User, { email: recipient.email }, { balance: recipient.balance + amount });
+        await transactionalEntityManager.save(FundTransfer, fundTransfer);
     });
 
 }

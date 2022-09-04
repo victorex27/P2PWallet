@@ -10,7 +10,7 @@ import CHANNEL from '../utilities/channel'
 import STATUS from '../utilities/status'
 
 @Entity()
-export class Transaction {
+export class PaystackTransaction {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -18,16 +18,16 @@ export class Transaction {
     @JoinColumn()
     user: User
 
-    @Column()
+    @Column({nullable: true})
     authorizationUrl: string
 
-    @Column()
+    @Column({nullable: true})
     paystackId: string
 
-    @Column()
+    @Column({nullable: true})
     accessCode: string
 
-    @Column()
+    @Column({nullable: true})
     referenceId: string
 
     @Column('double precision')
@@ -39,13 +39,10 @@ export class Transaction {
     @Column('text')
     channel: CHANNEL
 
-    @Column('double precision')
+    @Column({nullable: true, default:'NGN'})
     currency: string
 
-    @Column('double precision')
+    @Column({nullable: true, default:'0', type:'double precision'})
     fees: string
 
-    @ManyToOne(() => User, (user) => user.id)
-    @JoinColumn()
-    recipient: User
 }

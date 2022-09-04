@@ -21,7 +21,6 @@ export const GetSenderMiddleware = async (req: UserRequest, res: Response, next:
             throw NotFoundError('User not found');
         }
 
-        console.log({doesUserExist});
         req.sender = doesUserExist;
 
 
@@ -47,7 +46,6 @@ export const doesUserHaveSufficientBalance = async (req: UserRequest, res: Respo
             return next(NotFoundError('User not found'));
         }
 
-        console.log({payload, user})
 
 
         if(payload.amount > user.balance )

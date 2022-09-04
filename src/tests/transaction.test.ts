@@ -36,9 +36,9 @@ user2.email = 'aobikobe@gmail.com'
 user2.username = 'amaobi09'
 user2.balance = 110;
 
-const { password, ...rest } = user1;
 
-const validToken = signJWTPayload(rest);
+
+const validToken = signJWTPayload(user1);
 
 describe('/POST /transaction/transfer', () => {
     // Add a User to the Database
