@@ -3,7 +3,7 @@ import config from 'config'
 
 import { appDataSourceInitializer } from './utilities/app-data-source-initializer'
 
-const PORT = config.get('App.system.port')
+const PORT = process.env.PORT || config.get('App.system.port')
 
 appDataSourceInitializer
 
