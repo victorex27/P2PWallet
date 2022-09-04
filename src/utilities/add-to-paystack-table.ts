@@ -40,7 +40,7 @@ export const updatePaystackTransactionsDatabase = async (
 
             await transactionalEntityManager.update(
                 PaystackTransaction,
-                { referenceId , userId:user.id},
+                { referenceId , user},
                 {
                     status: response.data.status,
                     paystackId: response.data.id, fees: response.data.fees

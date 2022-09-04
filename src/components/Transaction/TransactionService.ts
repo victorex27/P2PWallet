@@ -66,17 +66,14 @@ export const VerifyPaystackTransactionService =
 
         if (!transaction) throw NotFoundError('No transaction found with reference');
 
-        console.log(transaction.user)
 
 
 
 
         const response = await verifyPaystackTransactionRequest(referenceId);
 
-        console.log(response.data.status)
 
         if (response.data.status === STATUS.SUCCESSFUL && transaction.status === STATUS.PENDING) {
-            console.log('here');
             updatePaystackTransactionsDatabase(referenceId, response, user)
         }
 
