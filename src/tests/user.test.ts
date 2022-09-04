@@ -15,7 +15,6 @@ chai.use(chaiHttp)
 describe('/POST signup', () => {
     // Add a User to the Database
     before((done) => {
-
         const user = new User()
 
         user.firstName = 'amaobi'
@@ -24,7 +23,9 @@ describe('/POST signup', () => {
         user.email = 'victorex@gmail.com'
         user.username = 'amaobi05'
 
-        appDataSourceInitializer().then(() => addASingleUserToDatabase(user)).then(() => done())
+        appDataSourceInitializer()
+            .then(() => addASingleUserToDatabase(user))
+            .then(() => done())
     })
 
     // Run teardown
@@ -40,17 +41,14 @@ describe('/POST signup', () => {
                 email: 'aobikobe@gmail.com',
                 password: 'password',
             }
-         
-          
 
             return request(app)
-            .post('/api/v1/signup')
-            .send(body)
-            .then((res) => {
-                expect(res.status).to.eql(400)
-                expect(res.body.message).to.eql('Invalid username')
-            })
-            
+                .post('/api/v1/signup')
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(400)
+                    expect(res.body.message).to.eql('Invalid username')
+                })
         })
     })
 
@@ -205,9 +203,7 @@ describe('/POST signup', () => {
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql(
-                        'Invalid password'
-                    )
+                    expect(res.body.message).to.eql('Invalid password')
                 })
         })
     })
@@ -235,11 +231,9 @@ describe('/POST signup', () => {
     })
 })
 
-
 describe('/POST login', () => {
     // Add a User to the Database
     before((done) => {
-
         const user = new User()
 
         user.firstName = 'amaobi'
@@ -248,17 +242,15 @@ describe('/POST login', () => {
         user.email = 'victorex@gmail.com'
         user.username = 'amaobi05'
 
-        appDataSourceInitializer().then(() => addASingleUserToDatabase(user)).then(() => done())
+        appDataSourceInitializer()
+            .then(() => addASingleUserToDatabase(user))
+            .then(() => done())
     })
 
     // Run teardown
     after((done) => {
         deleteAllUsersFromDatabase(done)
     })
-
-  
-
-   
 
     describe('Missing email field', () => {
         it('should return an error message', () => {
@@ -331,9 +323,9 @@ describe('/POST login', () => {
                 .post('/api/v1/login')
                 .send(body)
                 .then((res) => {
-                    expect(res.status).to.eql(400)
+                    expect(res.status).to.eql(401)
 
-                    expect(res.body.message).to.eql('username already exists')
+                    expect(res.body.message).to.eql('Invalid login attempt')
                 })
         })
     })
@@ -351,18 +343,16 @@ describe('/POST login', () => {
                 .post('/api/v1/login')
                 .send(body)
                 .then((res) => {
-                    expect(res.status).to.eql(400)
+                    expect(res.status).to.eql(401)
 
-                    expect(res.body.message).to.eql('email already exists')
+                    expect(res.body.message).to.eql('Invalid login attempt')
                 })
         })
     })
 
-   
     describe('A valid object body is passed', () => {
         it('should return a success message', () => {
             const body = {
-              
                 email: 'victorex@gmail.com',
                 password: 'fkjhkh978987987987f',
             }
@@ -370,10 +360,11 @@ describe('/POST login', () => {
                 .post('/api/v1/login')
                 .send(body)
                 .then((res) => {
-                    expect(res.status).to.eql(201)
-
+                    expect(res.status).to.eql(200)
+                    expect(res.body).to.have.property('token')
+                    expect(res.body).to.have.property('message')
                     expect(res.body.message).to.eql(
-                        `${body.email} successfully created.`
+                        `${body.email} login attempt successful.`
                     )
                 })
         })
