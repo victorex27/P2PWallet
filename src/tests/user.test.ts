@@ -1,22 +1,30 @@
 process.env.NODE_ENV = 'test'
-import config from 'config'
 import app from '../app'
 import * as chai from 'chai'
 import { request, expect } from 'chai'
 import chaiHttp = require('chai-http')
 import 'mocha'
 
-import { AppDataSource } from '../data-source'
 import { appDataSourceInitializer } from '../utilities/app-data-source-initializer'
 import { addASingleUserToDatabase } from '../utilities/save-user'
 import { deleteAllUsersFromDatabase } from '../utilities/delete-all-users'
+import { User } from '../entity/User'
 
 chai.use(chaiHttp)
 
 describe('/POST signup', () => {
     // Add a User to the Database
     before((done) => {
-        appDataSourceInitializer().then(() => addASingleUserToDatabase(done))
+
+        const user = new User()
+
+        user.firstName = 'amaobi'
+        user.lastName = 'aduchie'
+        user.password = 'fkjhkh978987987987f'
+        user.email = 'victorex@gmail.com'
+        user.username = 'amaobi05'
+
+        appDataSourceInitializer().then(() => addASingleUserToDatabase(user)).then(() => done())
     })
 
     // Run teardown
@@ -25,17 +33,24 @@ describe('/POST signup', () => {
     })
 
     describe('Missing username field', () => {
-        it('should return an error message', async (done) => {
+        it('should return an error message', () => {
             const body = {
                 firstName: 'amaobi',
                 lastName: 'obikobe',
                 email: 'aobikobe@gmail.com',
                 password: 'password',
             }
-            const res = await request(app).post('/signup').send(body)
-            expect(res.status).to.eql(400)
-            expect(res.body.message).to.eql('username is required')
-            done()
+         
+          
+
+            return request(app)
+            .post('/api/v1/signup')
+            .send(body)
+            .then((res) => {
+                expect(res.status).to.eql(400)
+                expect(res.body.message).to.eql('Invalid username')
+            })
+            
         })
     })
 
@@ -48,12 +63,12 @@ describe('/POST signup', () => {
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql('firstName is required')
+                    expect(res.body.message).to.eql('Invalid firstName')
                 })
         })
     })
@@ -67,12 +82,12 @@ describe('/POST signup', () => {
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql('lastName is required')
+                    expect(res.body.message).to.eql('Invalid lastName')
                 })
         })
     })
@@ -86,12 +101,12 @@ describe('/POST signup', () => {
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql('email is required')
+                    expect(res.body.message).to.eql('Invalid email')
                 })
         })
     })
@@ -106,12 +121,12 @@ describe('/POST signup', () => {
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql('invalid email')
+                    expect(res.body.message).to.eql('Invalid email')
                 })
         })
     })
@@ -125,12 +140,12 @@ describe('/POST signup', () => {
                 email: 'aobikobe@gmail.com',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
-                    expect(res.body.message).to.eql('password is required')
+                    expect(res.body.message).to.eql('Invalid password')
                 })
         })
     })
@@ -145,7 +160,7 @@ describe('/POST signup', () => {
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
@@ -161,11 +176,11 @@ describe('/POST signup', () => {
                 username: 'amaobi06',
                 firstName: 'amaobi',
                 lastName: 'obikobe',
-                email: 'aobikobe@gmail.com',
+                email: 'victorex@gmail.com',
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
@@ -182,16 +197,16 @@ describe('/POST signup', () => {
                 firstName: 'amaobi',
                 lastName: 'obikobe',
                 email: 'aobikobe@gmail.com',
-                password: 'password',
+                password: 'password%%%%%',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
                     expect(res.status).to.eql(400)
 
                     expect(res.body.message).to.eql(
-                        'password must be alphanumeric'
+                        'Invalid password'
                     )
                 })
         })
@@ -200,17 +215,17 @@ describe('/POST signup', () => {
     describe('A valid object body is passed', () => {
         it('should return a success message', () => {
             const body = {
-                username: 'amaobi06',
+                username: 'amaobi09',
                 firstName: 'amaobi',
                 lastName: 'obikobe',
-                email: 'aobikobe@gmail.com',
+                email: 'aobikobe12@gmail.com',
                 password: 'password',
             }
             return request(app)
-                .post('/signup')
+                .post('/api/v1/signup')
                 .send(body)
                 .then((res) => {
-                    expect(res.status).to.eql(200)
+                    expect(res.status).to.eql(201)
 
                     expect(res.body.message).to.eql(
                         `${body.email} successfully created.`

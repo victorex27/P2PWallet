@@ -5,7 +5,7 @@ export const deleteAllUsersFromDatabase = (done: () => void) => {
     const userRepository = AppDataSource.getRepository(User)
 
     userRepository
-        .delete({ email: 'victorex@gmail.com' })
+        .delete({ firstName: 'amaobi' })
         .then(() => {
             console.log('empty table')
             AppDataSource.destroy().then(() => {
