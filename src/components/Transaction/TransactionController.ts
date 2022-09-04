@@ -22,7 +22,7 @@ export const FundTransferController = async (
 
         return res
             .status(201)
-            .send({ message: 'fund transfer was successfully created.' })
+            .send({ message: 'Transfer was successful.' })
     } catch (error) {
         next(error)
     }

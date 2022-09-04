@@ -269,21 +269,18 @@ describe('/POST /transfer/fund', () => {
                 .set('Authorization', validToken)
                 .send(body)
                 .then((res) => {
-                    /**
-                     * TODO
-                     * GEt recipient and confirm that money was received
-                     *
-                     */
-                    getUserFromDatabase(body.email).then((user) => {
-                        expect(user?.balance).to.eql(
-                            user2.balance + body.amount
-                        )
-                        expect(res.status).to.eql(201)
+                    expect(res.status).to.eql(201)
 
-                        expect(res.body.message).to.eql(
-                            'Transfer was successful'
-                        )
-                    })
+                    expect(res.body.message).to.eql(
+                        'Transfer was successful.'
+                    )
+                    return getUserFromDatabase(body.email)
+                }).then((user) => {
+                    expect(user?.balance).to.eql(
+                        user2.balance + body.amount 
+                    )
+
+
                 })
         })
     })
