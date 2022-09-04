@@ -5,14 +5,15 @@ import { initiatePaystackFundingResponseInterface } from './interface/paystack'
 
 const paystackInitiateUrl: string = config.get('App.paystack.url.inititate')
 const paystackSecret: string = config.get('App.paystack.secretKey')
-
+const webhook: string = config.get('App.paystack.url.webhook')
+console.log({ paystackInitiateUrl })
 export const initiatePaystackFundingRequest = async (
     payload: FundTransferPayload
 ) => {
     payload.amount = payload.amount * 100
     const { data } = await axios.post<initiatePaystackFundingResponseInterface>(
         paystackInitiateUrl,
-        payload,
+        { ...payload, callback_url: webhook },
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -21,6 +22,8 @@ export const initiatePaystackFundingRequest = async (
             },
         }
     )
-
     return data
+
+
+
 }
