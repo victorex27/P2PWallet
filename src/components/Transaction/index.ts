@@ -1,11 +1,19 @@
 import { Router } from 'express'
 import { FundTransferController } from './TransactionController'
-import { GetSenderMiddleware, doesUserHaveSufficientBalance, isUserEmailTheSameWithRecipient } from './TransactionMiddleware'
-
+import {
+    GetSenderMiddleware,
+    doesUserHaveSufficientBalance,
+    isUserEmailTheSameWithRecipient,
+} from './TransactionMiddleware'
 
 const router = Router()
 
-router.post('/transfer/fund', GetSenderMiddleware, doesUserHaveSufficientBalance, isUserEmailTheSameWithRecipient, FundTransferController)
-
+router.post(
+    '/transfer/fund',
+    GetSenderMiddleware,
+    doesUserHaveSufficientBalance,
+    isUserEmailTheSameWithRecipient,
+    FundTransferController
+)
 
 export default router

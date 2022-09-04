@@ -5,11 +5,14 @@ import { FundTransferPayload } from './TransactionValidator'
 import { performFundTransfer } from '../../utilities/update-user-balance'
 import { User } from '../../entity/User'
 
-export const FundTransferService = async (payload: FundTransferPayload, sender: User) => {
+export const FundTransferService = async (
+    payload: FundTransferPayload,
+    sender: User
+) => {
     const validator = new FundTransferPayload()
 
-    validator.amount = payload?.amount;
-    validator.email = payload?.email;
+    validator.amount = payload?.amount
+    validator.email = payload?.email
 
     const errors = await validate(validator)
 
@@ -17,10 +20,9 @@ export const FundTransferService = async (payload: FundTransferPayload, sender: 
         throw UserError(`Invalid ${errors[0].property}`)
     }
 
-    const recipient = await getUserFromDatabase(validator.email);
+    const recipient = await getUserFromDatabase(validator.email)
 
-    if(!recipient) throw NotFoundError('Recipient account not found');
+    if (!recipient) throw NotFoundError('Recipient account not found')
 
-
-    await performFundTransfer( {sender, recipient , amount: payload.amount});
+    await performFundTransfer({ sender, recipient, amount: payload.amount })
 }

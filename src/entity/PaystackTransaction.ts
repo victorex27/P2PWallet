@@ -18,16 +18,16 @@ export class PaystackTransaction {
     @JoinColumn()
     user: User
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     authorizationUrl: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     paystackId: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     accessCode: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     referenceId: string
 
     @Column('double precision')
@@ -39,10 +39,9 @@ export class PaystackTransaction {
     @Column('text')
     channel: CHANNEL
 
-    @Column({nullable: true, default:'NGN'})
+    @Column({ nullable: true, default: 'NGN' })
     currency: string
 
-    @Column({nullable: true, default:'0', type:'double precision'})
+    @Column({ nullable: true, default: '0', type: 'double precision' })
     fees: string
-
 }

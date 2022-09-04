@@ -18,20 +18,19 @@ export class FundTransfer {
     @JoinColumn()
     user: User
 
-
     @Column('double precision')
     amount: number
 
     @Column('text')
     status: STATUS
 
-    @Column({ type: 'text', default: CHANNEL.WALLET})
+    @Column({ type: 'text', default: CHANNEL.WALLET })
     channel: CHANNEL
 
-    @Column({nullable: true, default:'NGN'})
+    @Column({ nullable: true, default: 'NGN' })
     currency: string
 
-    @Column({nullable: true, default:'0', type:'double precision'})
+    @Column({ nullable: true, default: '0', type: 'double precision' })
     fees: string
 
     @ManyToOne(() => User, (user) => user.id)
