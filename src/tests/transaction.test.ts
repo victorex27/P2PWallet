@@ -70,7 +70,7 @@ describe('/POST /transaction/transfer', () => {
                     expect(res.status).to.eql(401)
 
                     expect(res.body.message).to.eql(
-                        `User is not allowed to carry out operation`
+                        'jwt must be provided'
                     )
                 })
         })

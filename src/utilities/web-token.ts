@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import config from 'config'
 import User from './interface/User'
 
+
 const JWT_SECRET_KEY = config.get('App.system.jwt.secretKey') as string
 
 export const signJWTPayload = (obj: User) => {
@@ -9,5 +10,11 @@ export const signJWTPayload = (obj: User) => {
 }
 
 export const validateJWTToken = (token: string) => {
-    return jwt.verify(token, JWT_SECRET_KEY)
+    console.log( token.substring(7))
+
+    const user = (jwt.verify(token.substring(7), JWT_SECRET_KEY)) as User;
+
+    return user;
+
+
 }
