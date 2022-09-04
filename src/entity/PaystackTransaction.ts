@@ -4,6 +4,9 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn
+
 } from 'typeorm'
 import { User } from './User'
 import CHANNEL from '../utilities/channel'
@@ -44,4 +47,10 @@ export class PaystackTransaction {
 
     @Column({ nullable: true, default: '0', type: 'double precision' })
     fees: string
+
+    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+    public created_at: Date;
+
+    @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
+    public updated_at: Date;
 }

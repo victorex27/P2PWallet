@@ -1,11 +1,13 @@
 import { validate } from 'class-validator'
-import { getUserFromDatabase } from '../../utilities/get-user'
-import { UserError, NotFoundError } from '../../utilities/errors'
+import { getUserByIdFromDatabase, getUserFromDatabase } from '../../utilities/get-user'
+import { UserError, NotFoundError, CustomError, ForbiddenError } from '../../utilities/errors'
 import { FundTransferPayload } from './TransactionValidator'
 import { performFundTransfer } from '../../utilities/update-user-balance'
 import { User } from '../../entity/User'
-import { initiatePaystackFundingRequest } from '../../utilities/axiosCall'
-import { insertRequestIntoPaystackTransactionsDatabase } from '../../utilities/add-to-paystack-table'
+import { initiatePaystackFundingRequest, verifyPaystackTransactionRequest } from '../../utilities/axiosCall'
+import { insertRequestIntoPaystackTransactionsDatabase, updatePaystackTransactionsDatabase } from '../../utilities/add-to-paystack-table'
+import { getPaystackTransactionFromDatabase } from '../../utilities/get-transaction'
+import STATUS from '../../utilities/status'
 
 const runValidation = async (payload: FundTransferPayload) => {
     const validator = new FundTransferPayload()
@@ -50,3 +52,37 @@ export const PaystackFundingInitiatorService = async (
 
     return response
 }
+
+
+export const VerifyPaystackTransactionService =
+    async (
+        referenceId: string,
+        user: User
+    ) => {
+
+        if (!referenceId) throw UserError('Reference id not found');
+
+        const transaction = await getPaystackTransactionFromDatabase(referenceId);
+
+        if (!transaction) throw NotFoundError('No transaction found with reference');
+
+        console.log(transaction.user)
+
+
+
+
+        const response = await verifyPaystackTransactionRequest(referenceId);
+
+        console.log(response.data.status)
+
+        if (response.data.status === STATUS.SUCCESSFUL && transaction.status === STATUS.PENDING) {
+            console.log('here');
+            updatePaystackTransactionsDatabase(referenceId, response, user)
+        }
+
+
+
+
+        return response;
+
+    }

@@ -1,6 +1,6 @@
 enum STATUS {
     PENDING = 'pending',
-    SUCCESSFUL = 'successful',
+    SUCCESSFUL = 'success',
     FAILED = 'failed',
 }
 
