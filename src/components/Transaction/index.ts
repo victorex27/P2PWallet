@@ -2,6 +2,8 @@ import { Router } from 'express'
 import {
     FundTransferController,
     PaystackFundingInitiatorController,
+    VerifyPaystackTransaction,
+   
 } from './TransactionController'
 import {
     GetSenderMiddleware,
@@ -23,6 +25,12 @@ router.post(
     '/paystack/initiate',
     GetSenderMiddleware,
     PaystackFundingInitiatorController
+)
+
+router.get(
+    '/paystack/verify/:referenceId',
+    GetSenderMiddleware,
+    VerifyPaystackTransaction
 )
 
 export default router

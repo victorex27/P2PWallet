@@ -16,6 +16,7 @@ import {
 import { User } from '../entity/User'
 import { signJWTPayload } from '../utilities/web-token'
 import { getUserFromDatabase } from '../utilities/get-user'
+import { paystackTransactionSuccessResponse } from '../utilities/data/mock-data'
 
 chai.use(chaiHttp)
 
@@ -452,6 +453,33 @@ describe('/POST /paystack/initiate', () => {
                     expect(res.body).to.have.property('authorization_url')
                     expect(res.body).to.have.property('access_code')
                     expect(res.body).to.have.property('reference')
+                })
+        })
+    })
+
+
+    describe(' Verify transaction A valid object body is passed', () => {
+        it('should return a success message', () => {
+            const body = {
+                reference: '51f1wiobnt',
+            }
+
+            nock('https://api.paystack.co')
+                .get('/transaction/verify/51f1wiobnt')
+                .reply(200, paystackTransactionSuccessResponse)
+
+            return request(app)
+                .post('/api/v1/paystack/initiate')
+                .set('Authorization', validToken)
+                .send(body)
+                .then((res) => {
+                    expect(res.status).to.eql(200)
+
+        
+                    expect(res.body.status).to.have.property('reference')
+                    expect(res.body.status).to.eql('success')
+
+                   
                 })
         })
     })

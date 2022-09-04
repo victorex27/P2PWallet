@@ -14,3 +14,17 @@ export async function getUserFromDatabase(email: string) {
 
     return foundUser
 }
+
+
+export async function getUserByIdFromDatabase(id: number) {
+    const userRepository = AppDataSource.getRepository(User)
+
+    const foundUser = userRepository.findOne({
+        select: ['id', 'email', 'password', 'balance'],
+        where: {
+            id,
+        },
+    })
+
+    return foundUser
+}
