@@ -4,10 +4,7 @@ import * as chai from 'chai'
 import { request, expect } from 'chai'
 import chaiHttp = require('chai-http')
 import 'mocha'
-import nock from 'nock';
-
-
-
+import nock from 'nock'
 
 import { appDataSourceInitializer } from '../utilities/app-data-source-initializer'
 import { addASingleUserToDatabase } from '../utilities/save-user'
@@ -276,22 +273,15 @@ describe('/POST /transfer/fund', () => {
                 .then((res) => {
                     expect(res.status).to.eql(201)
 
-                    expect(res.body.message).to.eql(
-                        'Transfer was successful.'
-                    )
+                    expect(res.body.message).to.eql('Transfer was successful.')
                     return getUserFromDatabase(body.email)
-                }).then((user) => {
-                    expect(user?.balance).to.eql(
-                        user2.balance + body.amount
-                    )
-
-
+                })
+                .then((user) => {
+                    expect(user?.balance).to.eql(user2.balance + body.amount)
                 })
         })
     })
 })
-
-
 
 describe('/POST /paystack/initiate', () => {
     // Add a User to the Database
@@ -299,7 +289,6 @@ describe('/POST /paystack/initiate', () => {
         appDataSourceInitializer()
             .then(() => {
                 addASingleUserToDatabase(user1)
-
             })
             .then(() => done())
     })
@@ -314,8 +303,7 @@ describe('/POST /paystack/initiate', () => {
     describe('User tries to transfer without login in', () => {
         it('should return a success message', () => {
             const body = {
-                amount: 1000,
-                email: 'aobikobe@gmail.com',
+                amount: 100000,
             }
             return request(app)
                 .post('/api/v1/paystack/initiate')
@@ -331,8 +319,7 @@ describe('/POST /paystack/initiate', () => {
     describe('User tries to transfer with expired token ', () => {
         it('should return a success message', () => {
             const body = {
-                amount: 1000,
-                email: 'aobikobe@gmail.com',
+                amount: 100000,
             }
             return request(app)
                 .post('/api/v1/paystack/initiate')
@@ -349,8 +336,7 @@ describe('/POST /paystack/initiate', () => {
     describe('User tries to transfer with invalid token ', () => {
         it('should return a success message', () => {
             const body = {
-                amount: 1000,
-                email: 'aobikobe@gmail.com',
+                amount: 100000,
             }
             return request(app)
                 .post('/api/v1/paystack/initiate')
@@ -366,9 +352,7 @@ describe('/POST /paystack/initiate', () => {
 
     describe('Missing amount field', () => {
         it('should return an error message', () => {
-            const body = {
-                email: 'aobikobe@gmail.com',
-            }
+            const body = {}
 
             return request(app)
                 .post('/api/v1/paystack/initiate')
@@ -385,7 +369,6 @@ describe('/POST /paystack/initiate', () => {
         it('should return an error message', () => {
             const body = {
                 amount: -10,
-                email: 'aobikobe@gmail.com',
             }
 
             return request(app)
@@ -403,7 +386,6 @@ describe('/POST /paystack/initiate', () => {
         it('should return an error message', () => {
             const body = {
                 amount: 'ama',
-                email: 'aobikobe@gmail.com',
             }
 
             return request(app)
@@ -417,66 +399,10 @@ describe('/POST /paystack/initiate', () => {
         })
     })
 
-    describe('No User is passed', () => {
-        it('should return an error message', () => {
-            const body = {
-                amount: 10,
-            }
-            return request(app)
-                .post('/api/v1/paystack/initiate')
-                .set('Authorization', validToken)
-                .send(body)
-                .then((res) => {
-                    expect(res.status).to.eql(400)
-
-                    expect(res.body.message).to.eql('Invalid email')
-                })
-        })
-    })
-
-    describe('User is not an email type', () => {
-        it('should return an error message', () => {
-            const body = {
-                amount: 10,
-                email: 'amaobi',
-            }
-            return request(app)
-                .post('/api/v1/paystack/initiate')
-                .set('Authorization', validToken)
-                .send(body)
-                .then((res) => {
-                    expect(res.status).to.eql(400)
-
-                    expect(res.body.message).to.eql('Invalid email')
-                })
-        })
-    })
-
-    describe('User does not exist', () => {
-        it('should return an error message', () => {
-            const body = {
-                amount: 100,
-                email: 'amaobi889809@gmail.com',
-            }
-            return request(app)
-                .post('/api/v1/paystack/initiate')
-                .set('Authorization', validToken)
-                .send(body)
-                .then((res) => {
-                    expect(res.status).to.eql(404)
-
-                    expect(res.body.message).to.eql(
-                        'Recipient account not found'
-                    )
-                })
-        })
-    })
-
-
     describe('When paystack url is not reacheable', () => {
         it('should return a success message', () => {
             const body = {
-                amount: 100,
+                amount: 100000,
                 email: 'aobikobe@gmail.com',
             }
 
@@ -484,47 +410,35 @@ describe('/POST /paystack/initiate', () => {
                 .post('/transaction/initialize')
                 .reply(500)
 
-
             return request(app)
                 .post('/api/v1/paystack/initiate')
                 .set('Authorization', validToken)
                 .send(body)
                 .then((res) => {
-                    expect(res.status).to.eql(201)
-
-                    expect(res.body.message).to.eql(
-                        'Authorization URL created'
-                    )
-
-                    expect(res.body.data).to.have.property('authorization_url')
-                    expect(res.body.data).to.have.property('access_code')
-                    expect(res.body.data).to.have.property('reference')
-
+                    expect(res.status).to.eql(500)
                 })
         })
     })
 
-
-
     describe('A valid object body is passed', () => {
         it('should return a success message', () => {
             const body = {
-                amount: 100,
+                amount: 100000,
                 email: 'aobikobe@gmail.com',
             }
 
             nock('https://api.paystack.co')
                 .post('/transaction/initialize')
                 .reply(200, {
-                    "status": true,
-                    "message": "Authorization URL created",
-                    "data": {
-                        "authorization_url": "https://checkout.paystack.com/zuuyqoliznhaeri",
-                        "access_code": "zuuyqoliznhaeri",
-                        "reference": "51f1wiobnt"
-                    }
+                    status: true,
+                    message: 'Authorization URL created',
+                    data: {
+                        authorization_url:
+                            'https://checkout.paystack.com/zuuyqoliznhaeri',
+                        access_code: 'zuuyqoliznhaeri',
+                        reference: '51f1wiobnt',
+                    },
                 })
-
 
             return request(app)
                 .post('/api/v1/paystack/initiate')
@@ -533,14 +447,11 @@ describe('/POST /paystack/initiate', () => {
                 .then((res) => {
                     expect(res.status).to.eql(201)
 
-                    expect(res.body.message).to.eql(
-                        'Authorization URL created'
-                    )
+                    expect(res.body.message).to.eql('Authorization URL created')
 
-                    expect(res.body.data).to.have.property('authorization_url')
-                    expect(res.body.data).to.have.property('access_code')
-                    expect(res.body.data).to.have.property('reference')
-
+                    expect(res.body).to.have.property('authorization_url')
+                    expect(res.body).to.have.property('access_code')
+                    expect(res.body).to.have.property('reference')
                 })
         })
     })

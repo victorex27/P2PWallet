@@ -7,7 +7,6 @@ import { User } from '../../entity/User'
 import { initiatePaystackFundingRequest } from '../../utilities/axiosCall'
 import { insertRequestIntoPaystackTransactionsDatabase } from '../../utilities/add-to-paystack-table'
 
-
 const runValidation = async (payload: FundTransferPayload) => {
     const validator = new FundTransferPayload()
 
@@ -25,9 +24,7 @@ export const FundTransferService = async (
     payload: FundTransferPayload,
     sender: User
 ) => {
-
-
-    await runValidation(payload);
+    await runValidation(payload)
 
     const recipient = await getUserFromDatabase(payload.email)
 
@@ -36,23 +33,20 @@ export const FundTransferService = async (
     await performFundTransfer({ sender, recipient, amount: payload.amount })
 }
 
-
-
 export const PaystackFundingInitiatorService = async (
     user: User,
-    payload: FundTransferPayload,
-
+    payload: FundTransferPayload
 ) => {
+    payload.email = user.email
+    await runValidation(payload)
 
-    payload.email = user.email;
-    await runValidation(payload);
+    const response = await initiatePaystackFundingRequest(payload)
 
+    insertRequestIntoPaystackTransactionsDatabase(
+        user,
+        response,
+        payload.amount
+    )
 
-    const response = await initiatePaystackFundingRequest(payload);
-
-    insertRequestIntoPaystackTransactionsDatabase(user, response, payload.amount);
-
-    return response;
-
-
+    return response
 }

@@ -23,9 +23,9 @@ export const deleteAllFundTransferFromDatabase = () => {
     return fundTransfeRepository.delete({ status: STATUS.SUCCESSFUL })
 }
 
-
 export const deleteAllPaystackDataFromDatabase = () => {
-    const fundTransfeRepository = AppDataSource.getRepository(PaystackTransaction)
+    const fundTransfeRepository =
+        AppDataSource.getRepository(PaystackTransaction)
 
-    return fundTransfeRepository.delete({ currency:'NGN'  })
+    return fundTransfeRepository.delete({ currency: 'NGN' })
 }

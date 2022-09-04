@@ -1,5 +1,8 @@
 import { Router } from 'express'
-import { FundTransferController, PaystackFundingInitiatorController } from './TransactionController'
+import {
+    FundTransferController,
+    PaystackFundingInitiatorController,
+} from './TransactionController'
 import {
     GetSenderMiddleware,
     doesUserHaveSufficientBalance,

@@ -14,6 +14,9 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     logging: false,
     entities: [User, PaystackTransaction, FundTransfer],
-    migrations: [UserAndTransactionRecord1662290547120, UserAndTransactionRecord1662301436259],
+    migrations: [
+        UserAndTransactionRecord1662290547120,
+        UserAndTransactionRecord1662301436259,
+    ],
     subscribers: [],
 })
