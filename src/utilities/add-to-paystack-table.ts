@@ -2,7 +2,10 @@ import { AppDataSource } from '../data-source'
 import { PaystackTransaction } from '../entity/PaystackTransaction'
 
 import { User } from '../entity/User'
-import { initiatePaystackFundingResponseInterface, verifyPaystackFundingResponseInterface } from './interface/paystack'
+import {
+    initiatePaystackFundingResponseInterface,
+    verifyPaystackFundingResponseInterface,
+} from './interface/paystack'
 import STATUS from './status'
 
 export const insertRequestIntoPaystackTransactionsDatabase = (
@@ -25,36 +28,28 @@ export const insertRequestIntoPaystackTransactionsDatabase = (
     return paystackTransactionRepository.save(paystackTransaction)
 }
 
-
 export const updatePaystackTransactionsDatabase = async (
     referenceId: string,
     response: verifyPaystackFundingResponseInterface,
     user: User
-
 ) => {
-   
-
     await AppDataSource.manager.transaction(
         async (transactionalEntityManager) => {
-            
-
             await transactionalEntityManager.update(
                 PaystackTransaction,
-                { referenceId , user},
+                { referenceId, user },
                 {
                     status: response.data.status,
-                    paystackId: response.data.id, fees: response.data.fees
+                    paystackId: response.data.id,
+                    fees: response.data.fees,
                 }
             )
 
             await transactionalEntityManager.update(
                 User,
                 { email: user.email },
-                { balance: user.balance + (response.data.amount / 100) }
+                { balance: user.balance + response.data.amount / 100 }
             )
-
         }
     )
-
-
 }

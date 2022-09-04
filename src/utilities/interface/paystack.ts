@@ -1,4 +1,4 @@
-import STATUS from "../status"
+import STATUS from '../status'
 
 export interface initiatePaystackFundingResponseInterface {
     status: boolean
@@ -10,8 +10,6 @@ export interface initiatePaystackFundingResponseInterface {
     }
 }
 
-
-
 export interface verifyPaystackFundingResponseInterface {
     status: string
     message: string
@@ -19,10 +17,10 @@ export interface verifyPaystackFundingResponseInterface {
         authorization_url: string
         access_code: string
         reference: string
-        status: STATUS,
-        channel: string,
+        status: STATUS
+        channel: string
         id: string
-        fees: string,
+        fees: string
         amount: number
     }
 }

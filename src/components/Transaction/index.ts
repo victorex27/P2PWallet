@@ -3,7 +3,6 @@ import {
     FundTransferController,
     PaystackFundingInitiatorController,
     VerifyPaystackTransaction,
-   
 } from './TransactionController'
 import {
     GetSenderMiddleware,
