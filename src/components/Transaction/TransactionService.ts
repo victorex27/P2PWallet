@@ -1,11 +1,25 @@
 import { validate } from 'class-validator'
-import { getUserByIdFromDatabase, getUserFromDatabase } from '../../utilities/get-user'
-import { UserError, NotFoundError, CustomError, ForbiddenError } from '../../utilities/errors'
+import {
+    getUserByIdFromDatabase,
+    getUserFromDatabase,
+} from '../../utilities/get-user'
+import {
+    UserError,
+    NotFoundError,
+    CustomError,
+    ForbiddenError,
+} from '../../utilities/errors'
 import { FundTransferPayload } from './TransactionValidator'
 import { performFundTransfer } from '../../utilities/update-user-balance'
 import { User } from '../../entity/User'
-import { initiatePaystackFundingRequest, verifyPaystackTransactionRequest } from '../../utilities/axiosCall'
-import { insertRequestIntoPaystackTransactionsDatabase, updatePaystackTransactionsDatabase } from '../../utilities/add-to-paystack-table'
+import {
+    initiatePaystackFundingRequest,
+    verifyPaystackTransactionRequest,
+} from '../../utilities/axiosCall'
+import {
+    insertRequestIntoPaystackTransactionsDatabase,
+    updatePaystackTransactionsDatabase,
+} from '../../utilities/add-to-paystack-table'
 import { getPaystackTransactionFromDatabase } from '../../utilities/get-transaction'
 import STATUS from '../../utilities/status'
 
@@ -53,33 +67,24 @@ export const PaystackFundingInitiatorService = async (
     return response
 }
 
+export const VerifyPaystackTransactionService = async (
+    referenceId: string,
+    user: User
+) => {
+    if (!referenceId) throw UserError('Reference id not found')
 
-export const VerifyPaystackTransactionService =
-    async (
-        referenceId: string,
-        user: User
-    ) => {
+    const transaction = await getPaystackTransactionFromDatabase(referenceId)
 
-        if (!referenceId) throw UserError('Reference id not found');
+    if (!transaction) throw NotFoundError('No transaction found with reference')
 
-        const transaction = await getPaystackTransactionFromDatabase(referenceId);
+    const response = await verifyPaystackTransactionRequest(referenceId)
 
-        if (!transaction) throw NotFoundError('No transaction found with reference');
-
-
-
-
-
-        const response = await verifyPaystackTransactionRequest(referenceId);
-
-
-        if (response.data.status === STATUS.SUCCESSFUL && transaction.status === STATUS.PENDING) {
-            updatePaystackTransactionsDatabase(referenceId, response, user)
-        }
-
-
-
-
-        return response;
-
+    if (
+        response.data.status === STATUS.SUCCESSFUL &&
+        transaction.status === STATUS.PENDING
+    ) {
+        updatePaystackTransactionsDatabase(referenceId, response, user)
     }
+
+    return response
+}

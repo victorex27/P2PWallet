@@ -18,7 +18,7 @@ export const AppDataSource = new DataSource({
     migrations: [
         UserAndTransactionRecord1662290547120,
         UserAndTransactionRecord1662301436259,
-        UserAndTransactionRecord1662312640600
+        UserAndTransactionRecord1662312640600,
     ],
     subscribers: [],
 })

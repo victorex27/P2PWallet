@@ -457,7 +457,6 @@ describe('/POST /paystack/initiate', () => {
         })
     })
 
-
     describe(' Verify transaction A valid object body is passed', () => {
         it('should return a success message', () => {
             const body = {
@@ -475,11 +474,8 @@ describe('/POST /paystack/initiate', () => {
                 .then((res) => {
                     expect(res.status).to.eql(200)
 
-        
                     expect(res.body.status).to.have.property('reference')
                     expect(res.body.status).to.eql('success')
-
-                   
                 })
         })
     })

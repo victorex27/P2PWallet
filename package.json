@@ -10,7 +10,7 @@
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
         "lint:fix": "eslint --fix .",
-        "postinstall":"tsc",
+        "postinstall": "tsc",
         "start:dev": "tsc --project tsconfig.build.json && nodemon dist/index.js",
         "start": "NODE_ENV=production node dist/index.js",
         "typeorm": "typeorm-ts-node-commonjs",

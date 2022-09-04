@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+import crypto from 'crypto'
 import { Response, NextFunction } from 'express'
-import config from 'config';
+import config from 'config'
 import { NotFoundError } from '../../utilities/errors'
 import UserRequest from '../../utilities/interface/UserRequest'
 import {
@@ -61,7 +61,6 @@ export const VerifyPaystackTransaction = async (
     next: NextFunction
 ) => {
     try {
-        
         const referenceId = req.params.referenceId as string
 
         const sender = req?.sender
@@ -70,12 +69,14 @@ export const VerifyPaystackTransaction = async (
             throw NotFoundError('User not found')
         }
 
-        const response = await VerifyPaystackTransactionService(referenceId, sender);
+        const response = await VerifyPaystackTransactionService(
+            referenceId,
+            sender
+        )
 
         return res
             .status(200)
-            .send({ status: response.data.status , message: response.message })
-            
+            .send({ status: response.data.status, message: response.message })
     } catch (error) {
         next(error)
     }

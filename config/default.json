@@ -18,7 +18,7 @@
             "url": {
                 "inititate": "https://api.paystack.co/transaction/initialize",
                 "verify": "https://api.paystack.co/transaction/verify",
-                "webhook":"https://eb70-102-89-34-123.ngrok.io/api/v1/paystack/webhook"
+                "webhook": "https://eb70-102-89-34-123.ngrok.io/api/v1/paystack/webhook"
             },
             "secretKey": "sk_test_9369f28cc8a60025ccf2a058216b7d51932f0b0f"
         }
