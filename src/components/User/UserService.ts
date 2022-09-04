@@ -4,7 +4,7 @@ import { addASingleUserToDatabase } from "../../utilities/save-user";
 
 
 
-const UserSignUpService = async (user: User) => {
+export const UserSignUpService = async (user: User) => {
 
     const newUser = new User();
 
@@ -27,7 +27,3 @@ const UserSignUpService = async (user: User) => {
 
 
 }
-
-
-
-export default UserSignUpService;
